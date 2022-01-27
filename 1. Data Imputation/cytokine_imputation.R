@@ -14,7 +14,7 @@ library(imputeLCMD)
 library(xlsx)
 
 
-setwd("/Users/lkoval/IEHS Dropbox/Rager Lab/Lauren_Koval/LK_Lab_Notebook/Projects/Ecig/Cytokine_Imputation")
+setwd("/Cytokine_Imputation")
 
 
 #load cytokine data
