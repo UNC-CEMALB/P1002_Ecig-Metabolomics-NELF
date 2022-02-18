@@ -1,5 +1,2 @@
-# Support Vector Machine (SVM)
-- Using the supervised machine learning method, SVM, to predict smoking status (non-smoker or e-cig user) based on metabolomics concentrations
-
-# Random Forest (RF)
-- Using the supervised machine learning method, RF, to predict smoking status (non-smoker or e-cig user) based on metabolomics concentrations
+# Smoking Status Prediction
+- Using the supervised machine learning method, random forest (RF) or support vector machine (SVM), to predict smoking status (non-smoker or e-cig user) based on metabolomics concentrations
