@@ -1,0 +1,117 @@
+---
+title: "rager mfck ecig"
+author: "Nyssa Tucker"
+date: "2/22/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## load libraries and dfs
+```{r }
+library(tidyverse)
+library(pheatmap)
+library(viridis)
+library(readxl)
+library(plotly)
+
+rm(list =ls())
+wdir <- "/home/tuckerny/Documents/GitHub/cautious-giggle/data/"
+date <- "20220224"
+
+
+cov_df <- as_tibble(read.csv(paste0(wdir,"20220224_rager_mf_coverageb.csv"))) %>% filter(mol == "MF")
+mf_df <- as_tibble(read.csv(paste0(wdir,"20220217_mf_qrilc_w40.csv"))) %>% select(c('sample',everything())) %>% separate(sample, into=c("smoker1","id"))
+  mf_df$smoker <- NA
+  mf_df["smoker"][mf_df["smoker1"]=="NS"] <- 0
+  mf_df["smoker"][mf_df["smoker1"]=="Ecig"] <- 1
+  mf_df <- mf_df%>% select(c('id',"smoker",everything())) %>% select(-c('smoker1')) 
+  mf_df$id <- as.numeric(mf_df$id)
+  samples <- mf_df$id
+  mf2 <- mf_df %>% pivot_longer(cols = -c("id","smoker"))%>% separate(name, into=c("mol","n_mf"))
+    mf2$n_mf <- as.numeric(mf2$n_mf)
+ck_df <- as_tibble(read.csv(paste0(wdir,"20220214_ck_qrilc_50p_w40.csv")))
+chem_df <- as_tibble(read_excel(paste0(wdir,"072821_ForDrRagerDataset.xlsx"),sheet = "C18_pos_Fea3872")) %>% select(c(1,2,12))
+
+chem_cov <- cbind(cov_df,chem_df)
+  cc1 <- chem_cov %>% select(-c(cov.x))
+  cc0 <- chem_cov %>% select(-c(cov.y))
+
+  mf2.1 <- mf2 %>% filter(smoker == "1")
+  mf2.0 <- mf2 %>% filter(smoker == "0")
+mf2.1 <- mf2.1%>% merge(cc1[c("n_mf","cov.y","Name","mz","delta_c")],by ='n_mf') %>% select(-c("mol"))
+  colnames(mf2.1) <-c("n_mf","id","smoker","abud","cov","chem","mz","delta_c")
+  mf2.1b <- mf2.1 %>%group_by(n_mf)%>% summarize_at(c("smoker","abud","cov","mz","delta_c"),.funs=c(mean,sd))
+mf2.0 <- mf2.0%>% merge(cc0[c("n_mf","cov.x","Name","mz","delta_c")],by ='n_mf')%>% select(-c("mol"))
+  colnames(mf2.0) <-c("n_mf","id","smoker","abud","cov","chem","mz","delta_c")
+  mf2.0b <- mf2.0 %>%group_by(n_mf)%>% summarize_at(c("smoker","abud","cov","mz","delta_c"),.funs=c(mean,sd))
+mf3 <- rbind(mf2.0,mf2.1)
+mf3b <- rbind(mf2.0b,mf2.1b)%>% select(-c(7,9:11))
+  colnames(mf3b) <-c("n_mf","smoker","abud","cov","mz","delta_c","abud_sd")
+
+```
+
+## demo mosaic
+```{r }
+#chem_cov %>% ggplot(aes(mz,log10(ratio_c),color=sign)) + geom_jitter()
+chem_cov %>% ggplot(aes(mz,delta_c,color=sign)) + geom_jitter(alpha=0.15)
+
+```
+
+
+## coverage x coverage
+```{r }
+#mf3 %>% ggplot(aes(cov,abud,alpha=mz)) + geom_jitter()+facet_wrap(c('smoker'))
+
+#plot_ly(x=mf2.1$delta_c, y=mf2.1$abud, z=mf2.1$mz, type="scatter3d", mode="markers", color=mf2.1$abud)
+#plot_ly(x=mf2.0$delta_c, y=mf2.0$abud, z=mf2.0$mz, type="scatter3d", mode="markers", color=mf2.0$abud)
+
+
+  mf3b1 <- mf3b %>% filter(smoker == "1")
+plot_ly(x=mf3b1$cov, y=mf3b1$abud, z=mf3b1$mz, type="scatter3d", mode="markers", color=mf3b1$delta_c, size=mf3b1$abud_sd)
+
+
+```
+
+```{r}
+  mf3b0 <- mf3b %>% filter(smoker == "0")
+plot_ly(x=mf3b0$cov, y=mf3b0$abud, z=mf3b0$mz, type="scatter3d", mode="markers", color=mf3b0$delta_c, size=mf3b0$abud_sd)
+#delta here is sm - ns
+
+```
+
+
+## sdfg
+```{r }
+
+mf3b %>% ggplot(aes(mz,abud,size = abud_sd,color=cov)) + geom_jitter(alpha=0.15) + facet_wrap(facets="smoker") +  scale_color_viridis(option="viridis") 
+mf3b %>% ggplot(aes(mz,abud,size = cov,color=abud_sd)) + geom_jitter(alpha=0.15) + facet_wrap(facets="smoker") +  scale_color_viridis(option="viridis") 
+
+
+mf3b %>% ggplot(aes(cov,mz,size = abud,color=abud)) + geom_jitter(alpha=0.15) + facet_wrap(facets="smoker") +  scale_color_viridis(option="viridis") 
+
+```
+
+
+## pheatmap mfck
+```{r }
+afsdf
+
+```
+
+## mahal facets
+```{r }
+afsdf
+
+```
+
+
+## delta if can
+```{r }
+afsdf
+
+```
+
+
