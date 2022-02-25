@@ -51,6 +51,34 @@ mf3 <- rbind(mf2.0,mf2.1)
 mf3b <- rbind(mf2.0b,mf2.1b)%>% select(-c(7,9:11))
   colnames(mf3b) <-c("n_mf","smoker","abud","cov","mz","delta_c","abud_sd")
 
+mf4 <- mf3b
+
+  mf3b1 <- mf3b %>% filter(smoker == "1")
+  mf3b0 <- mf3b %>% filter(smoker == "0")
+  
+delta_a <- mf3b1$abud - mf3b0$abud
+mf4$delta_a <-  rep(delta_a,times=2)
+delta_ca <- (mf3b1$abud /mf3b1$cov)- (mf3b0$abud /mf3b0$cov)
+mf4$delta_ca <-  rep(delta_ca,times=2)
+
+delta_ca <- (mf3b1$abud /mf3b1$cov)- (mf3b0$abud /mf3b0$cov)
+mf4$delta_ca <-  rep(delta_ca,times=2)
+
+```
+
+
+##plot deltas
+```{r}
+axx = list(title='Chemical Diversity (m/z)')
+axy = list(title='Abundance Delta (EC - NS)')
+axz = list(title='Coverage Delta (EC - NS)')
+
+plot_ly(x=mf4$mz, y=mf4$delta_a, z=mf4$delta_c, type="scatter3d", mode="markers", color=mf4$delta_a, size=abs(mf4$delta_c))%>%
+  layout(title = 'Comparison: nonsmoker (NS) and ecig (EC) groups', plot_bgcolor = "#e5ecf6", 
+         #xaxis = list(title = 'Chemical Diversity (m/z)'), 
+         #yaxis = list(title = 'Abundance Delta (EC - NS)'), 
+         #zaxis = list(title = 'Coverage Delta (EC - NS)'), 
+         legend = list(title=list(text='<b> Chemical Diversity (m/z) </b>')))
 ```
 
 ## demo mosaic
@@ -70,14 +98,14 @@ chem_cov %>% ggplot(aes(mz,delta_c,color=sign)) + geom_jitter(alpha=0.15)
 
 
   mf3b1 <- mf3b %>% filter(smoker == "1")
-plot_ly(x=mf3b1$cov, y=mf3b1$abud, z=mf3b1$mz, type="scatter3d", mode="markers", color=mf3b1$delta_c, size=mf3b1$abud_sd)
+plot_ly(x=mf3b1$mz, y=mf3b1$abud, z=mf3b1$cov, type="scatter3d", mode="markers", color=mf3b1$mz, size=mf3b1$cov)
 
 
 ```
 
 ```{r}
   mf3b0 <- mf3b %>% filter(smoker == "0")
-plot_ly(x=mf3b0$cov, y=mf3b0$abud, z=mf3b0$mz, type="scatter3d", mode="markers", color=mf3b0$delta_c, size=mf3b0$abud_sd)
+plot_ly(x=mf3b0$mz, y=mf3b0$abud, z=mf3b0$cov, type="scatter3d", mode="markers", color=mf3b0$mz, size=mf3b0$cov)
 #delta here is sm - ns
 
 ```
@@ -97,13 +125,13 @@ mf3b %>% ggplot(aes(cov,mz,size = abud,color=abud)) + geom_jitter(alpha=0.15) + 
 
 ## pheatmap mfck
 ```{r }
-afsdf
+plot_ly(x=log10(mf3b$mz), y=mf3b$abud, z=mf3b1$cov, type="scatter3d", mode="markers", color=log10(mf3b1$mz), size=mf3b1$cov)
 
 ```
 
 ## mahal facets
 ```{r }
-afsdf
+#plot_ly(x=log10(mf3b0$mz), y=mf3b0$abud, z=mf3b0$cov, type="scatter3d", mode="markers", color=log10(mf3b0$mz), size=mf3b0$cov)
 
 ```
 
