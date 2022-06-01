@@ -4,5 +4,6 @@
 > Exploratory analyses using metabolomics data to predict...
   > 1. Smoking Status
   > 2. Potential changes in cytokine concentrations in E-cig users
+  > 3. GMCSF abundance levels
 
 > All analyses in this respository will later be designated by their figure number or table number in the manuscript in parantheses.
